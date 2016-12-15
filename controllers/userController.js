@@ -16,9 +16,14 @@ module.exports = function(server){
 
 	//fectch a user
 	server.get("/user/:id",function(req,res,next){
+		req.assert('id','Id is required and must be numeric').notEmpty().isInt();
+		var errors = req.validationErrors();
+		if(errors){
+			helpers.failure(res,next,errors[0],400);
+		}
 		if(typeof(users[parseInt(req.params.id)])== 'undefined')
-			failure (res,next, 'The specified user could not be found in database',404)
-		success(res,next,users[parseInt(req.params.id)]);
+			helpers.failure (res,next, 'The specified user could not be found in database',404)
+		helpers.success(res,next,users[parseInt(req.params.id)]);
 	});
 
 	//create new user
